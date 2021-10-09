@@ -1,8 +1,8 @@
 # output files
-*run.sh.o*
-*build.sh.o*
-*run.sh.e*
-*build.sh.e*
+**/**/run.sh.*
+**/**/build.sh.*
+**/**/run.sh.*
+**/**/build.sh.*
 
 # Prerequisites
 *.d
