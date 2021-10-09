@@ -3,11 +3,11 @@ CXXFLAGS = -O2 -g -std=c++17
 
 SRC := HelloWorld.cpp
 
-.PHONY: fpga_emu run_emu clean 
+.PHONY: fpga_emu run_emu fpga_emu_usm run_emu_usm clean 
 
 fpga_emu: HelloWorld.fpga_emu
 
-fpga_hw: HelloWorld.fpga_hw
+hw: HelloWorld.fpga
 
 report: HelloWorld_report.a
 
@@ -17,14 +17,14 @@ HelloWorld.fpga_emu: $(SRC)
 a.o: $(SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
-HelloWorld.fpga_hw: a.o
+HelloWorld.fpga: a.o
 	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -Xshardware
 
 run_emu: HelloWorld.fpga_emu
 	./HelloWorld.fpga_emu
 
-run_hw: HelloWorld.fpga_hw
-	./HelloWorld.fpga_hw
+run_hw: HelloWorld.fpga
+	./HelloWorld.fpga
 
 dev.o: $(SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
@@ -33,4 +33,4 @@ HelloWorld_report.a: dev.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 clean:
-	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu HelloWorld.fpga_hw *.a
+	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu HelloWorld.fpga *.a
