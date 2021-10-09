@@ -3,6 +3,7 @@
 **/**/build.sh.*
 **/**/run.sh.*
 **/**/build.sh.*
+**/**/*.prj/**
 
 # Prerequisites
 *.d
