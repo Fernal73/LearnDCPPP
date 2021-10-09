@@ -33,4 +33,4 @@ HelloWorld_report.a: dev.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 clean:
-	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu HelloWorld.fpga *.a
+	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu HelloWorld.fpga *.a *.sh.o* *.sh.e*
