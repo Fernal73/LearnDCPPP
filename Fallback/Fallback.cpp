@@ -14,8 +14,9 @@ using namespace sycl;
 
 int main() {
   cpu_selector cpuSelector;
+  gpu_selector gpuSelector;
   queue cpuQueue(cpuSelector);
-  queue defaultqueue;
+  queue defaultqueue(gpuSelector);
   buffer<int, 2> buf(range<2>(N, N));
 
   defaultqueue.submit(
