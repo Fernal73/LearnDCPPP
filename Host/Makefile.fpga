@@ -3,6 +3,8 @@ CXXFLAGS = -O2 -g -std=c++17
 
 SRC := Host.cpp
 CPU_SRC := CPU.cpp
+SEL_SRC := Select.cpp
+QUE_SRC := Queues.cpp
 
 .PHONY: fpga_emu run_emu clean 
 
@@ -10,13 +12,25 @@ fpga_emu: Host.fpga_emu
 
 cpu_fpga_emu: CPU.fpga_emu
 
+sel_fpga_emu: Select.fpga_emu
+
+que_fpga_emu: Queues.fpga_emu
+
 hw: Host.fpga
 
 cpu_hw: CPU.fpga
 
+sel_hw: Select.fpga
+
+que_hw: Queues.fpga
+
 report: Host_report.a
 
 cpu_report: CPU_report.a
+
+sel_report: Select_report.a
+
+que_report: Queues_report.a
 
 Host.fpga_emu: $(SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -DFPGA_EMULATOR=1
@@ -24,7 +38,19 @@ Host.fpga_emu: $(SRC)
 CPU.fpga_emu: $(CPU_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -DFPGA_EMULATOR=1
 
+Select.fpga_emu: $(SEL_SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -DFPGA_EMULATOR=1
+
+Queues.fpga_emu: $(QUE_SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -DFPGA_EMULATOR=1
+
 a.o: $(SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
+
+cpu_a.o: $(CPU_SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
+
+cpu_a.o: $(CPU_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
 cpu_a.o: $(CPU_SRC)
@@ -61,4 +87,4 @@ CPU_report.a: cpu_dev.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 clean:
-	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu Host.fpga CPU.fpga *.a *.sh.o* *.sh.e*
+	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu Host.fpga CPU.fpga Select.fpga Queues.fpga *.a *.sh.o* *.sh.e*
