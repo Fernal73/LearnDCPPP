@@ -31,8 +31,8 @@ int main() {
                        });
       },
       cpuQueue);
-  //auto bufacc1 = buf.get_access<access::mode::read>();
-  host_accessor bufacc1{buf};
+  auto bufacc1 = buf.get_access<access::mode::read>();
+  //host_accessor bufacc1{buf};
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       if (bufacc1[i][j] != i + j) {
