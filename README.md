@@ -1,4 +1,4 @@
-# LearnDCPPP
+# LearnDPCpp
 
 ### https://devcloud.intel.com/oneapi/
 
