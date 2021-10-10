@@ -9,8 +9,9 @@
 using namespace sycl;
 using namespace std;
 
-int main() { // Create queue to use the host device explicitly queue Q{
-             // host_selector{} };
+int main() { 
+  // Create queue to use the host device explicitly 
+  queue Q{ host_selector{} };
   std::cout << "Selected device: " << Q.get_device().get_info<info::device::name>()
        << "\n";
   std::cout << " -> Device vendor: "
