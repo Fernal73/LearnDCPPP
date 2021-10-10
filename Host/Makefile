@@ -34,7 +34,7 @@ run_cpu:
 run_sel: 
 	./$(SEL_EXE_NAME)
 
-run_sel: 
+run_que: 
 	./$(QUE_EXE_NAME)
 
 clean: 
