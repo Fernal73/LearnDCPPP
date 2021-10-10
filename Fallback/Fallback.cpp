@@ -4,6 +4,7 @@
  *
  * Distributed under terms of the MIT license.
  */
+
 #include <CL/sycl.hpp>
 #include <iostream>
 
