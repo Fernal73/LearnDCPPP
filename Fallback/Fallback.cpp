@@ -18,19 +18,17 @@ int main() {
   queue defaultqueue;
   buffer<int, 2> buf(range<2>(N, N));
 
-  nd_range<2> NDR(range<2>(N, N), range<2>(M, M));
-
   defaultqueue.submit(
       [&](handler &h) {
         auto bufacc = buf.get_access<access::mode::read_write>(h);
-        h.parallel_for(NDR, [=](nd_item<2> i) {
-          id<2> ind = i.get_global_id();
-          bufacc[ind[0]][ind[1]] = ind[0] + ind[1];
-        });
+        h.parallel_for(nd_range<2>(range<2>(N, N), range<2>(M, M)),
+                       [=](nd_item<2> i) {
+                         id<2> ind = i.get_global_id();
+                         bufacc[ind[0]][ind[1]] = ind[0] + ind[1];
+                       });
       },
       cpuQueue);
   auto bufacc1 = buf.get_access<access::mode::read>();
-  // host_accessor bufacc1{buf};
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < N; j++) {
       if (bufacc1[i][j] != i + j) {
