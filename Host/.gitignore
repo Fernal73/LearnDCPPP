@@ -2,3 +2,7 @@ Host
 Host.fpga*
 CPU
 CPU.fpga*
+Select
+Select.fpga*
+Queues
+Queues.fpga*
