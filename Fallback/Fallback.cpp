@@ -4,31 +4,34 @@
  *
  * Distributed under terms of the MIT license.
  */
-
 #include <CL/sycl.hpp>
-#include <array>
 #include <iostream>
+
+const int N = 1024;
+const int M = 32;
+
 using namespace sycl;
+
 int main() {
-  constexpr int global_size = 16;
-  constexpr int local_size = 16;
-  buffer<int, 2> B{range{global_size, global_size}};
-  queue gpu_Q{gpu_selector{}};
-  queue host_Q{host_selector{}};
-  nd_range NDR{range{global_size, global_size}, range{local_size, local_size}};
-  gpu_Q.submit(
+  cpu_selector cpuSelector;
+  queue cpuQueue(cpuSelector);
+  queue defaultqueue;
+  buffer<int, 2> buf(range<2>(N, N));
+
+  defaultqueue.submit(
       [&](handler &h) {
-        accessor acc{B, h};
-        h.parallel_for(NDR, [=](auto id) {
-          auto ind = id.get_global_id();
-          acc[ind] = ind[0] + ind[1];
-        });
+        auto bufacc = buf.get_access<access::mode::read_write>(h);
+        h.parallel_for(nd_range<2>(range<2>(N, N), range<2>(M, M)),
+                       [=](nd_item<2> i) {
+                         id<2> ind = i.get_global_id();
+                         bufacc[ind[0]][ind[1]] = ind[0] + ind[1];
+                       });
       },
-      host_Q);
-  /** <<== Fallback Queue Specified **/ host_accessor acc{B};
-  for (int i = 0; i < global_size; i++) {
-    for (int j = 0; j < global_size; j++) {
-      if (acc[i][j] != i + j) {
+      cpuQueue);
+  auto bufacc1 = buf.get_access<access::mode::read>();
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < N; j++) {
+      if (bufacc1[i][j] != i + j) {
         std::cout << "Wrong result\n";
         return 1;
       }
