@@ -50,10 +50,10 @@ a.o: $(SRC)
 cpu_a.o: $(CPU_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
-cpu_a.o: $(CPU_SRC)
+sel_a.o: $(SEL_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
-cpu_a.o: $(CPU_SRC)
+que_a.o: $(QUE_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
 Host.fpga: a.o
@@ -62,11 +62,23 @@ Host.fpga: a.o
 CPU.fpga: cpu_a.o
 	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -Xshardware
 
+Select.fpga: sel_a.o
+	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -Xshardware
+
+Queues.fpga: que_a.o
+	$(CXX) $(CXXFLAGS) -fintelfpga $^ -o $@ -Xshardware
+
 run_emu: Host.fpga_emu
 	./Host.fpga_emu
 
 cpu_run_emu: CPU.fpga_emu
 	./CPU.fpga_emu
+
+sel_run_emu: Select.fpga_emu
+	./Select.fpga_emu
+
+que_run_emu: Queues.fpga_emu
+	./Queues.fpga_emu
 
 run_hw: Host.fpga
 	./Host.fpga
