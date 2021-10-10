@@ -14,9 +14,8 @@ using namespace sycl;
 
 int main() {
   cpu_selector cpuSelector;
-  gpu_selector gpuSelector;
   queue cpuQueue(cpuSelector);
-  queue defaultqueue(gpuSelector);
+  queue defaultqueue;
   buffer<int, 2> buf(range<2>(N, N));
 
   nd_range NDR { range{ N, N }, range{ M, M }};
