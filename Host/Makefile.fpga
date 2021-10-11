@@ -86,16 +86,34 @@ run_hw: Host.fpga
 cpu_run_hw: CPU.fpga
 	./CPU.fpga
 
+sel_run_hw: Select.fpga
+	./Select.fpga
+
+que_run_hw: Queues.fpga
+	./Queues.fpga
+
 dev.o: $(SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
 cpu_dev.o: $(CPU_SRC)
 	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
 
+sel_dev.o: $(SEL_SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
+
+que_dev.o: $(QUE_SRC)
+	$(CXX) $(CXXFLAGS) -fintelfpga -c $^ -o $@ -DFPGA=1
+
 Host_report.a: dev.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 CPU_report.a: cpu_dev.o
+	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
+
+Select_report.a: sel_dev.o
+	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
+
+Queues_report.a: que_dev.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 clean:
