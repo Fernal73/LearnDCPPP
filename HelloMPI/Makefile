@@ -23,8 +23,7 @@ run:
 ifeq ($(HOSTNAME),$(LOCALHOST))
 	mpirun --allow-run-as-root --hostfile hosts -np 5 $(EXE_NAME)
 else
-	./createhosts
-	mpirun -f freehosts -np 2 -ppn 2 -localhost $(HOSTNAME) ./$(EXE_NAME)
+	mpirun -np 2 -ppn 2 -hosts $(HOSTNAME) ./$(EXE_NAME)
 endif
 
 clean: 
