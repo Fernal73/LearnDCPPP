@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-#PBS -q temp
-#PBS -l nodes=6:ppn=2
+#PBS -q batch
+#PBS -l nodes=2:ppn=2
 
 source /opt/intel/inteloneapi/setvars.sh
 make clean
