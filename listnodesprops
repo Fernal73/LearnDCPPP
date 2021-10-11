@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+pbsnodes | grep "properties =" \
+  | awk '{print $3}' | sort \
+  | uniq -c
