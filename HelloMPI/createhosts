@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-pbsnodes -l free | awk '{ print $1;}' > freehosts
