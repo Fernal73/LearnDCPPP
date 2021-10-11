@@ -5,6 +5,7 @@ EXE_NAME = HelloWorld
 SOURCES = HelloWorld.cpp
 
 all: build
+.PHONY: all clean run build
 
 build:
 	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
