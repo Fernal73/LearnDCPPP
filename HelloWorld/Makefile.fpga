@@ -3,7 +3,7 @@ CXXFLAGS = -O2 -g -std=c++17
 
 SRC := HelloWorld.cpp
 
-.PHONY: fpga_emu run_emu clean 
+.PHONY: fpga_emu run_emu clean hw report run_hw 
 
 fpga_emu: HelloWorld.fpga_emu
 
