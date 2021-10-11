@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+pbsnodes | sort | grep properties \
+  | grep "$1"
+
