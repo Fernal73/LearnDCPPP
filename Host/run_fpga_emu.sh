@@ -2,3 +2,5 @@
 source /opt/intel/inteloneapi/setvars.sh
 make run_emu -f Makefile.fpga
 make cpu_run_emu -f Makefile.fpga
+make sel_run_emu -f Makefile.fpga
+make que_run_emu -f Makefile.fpga
