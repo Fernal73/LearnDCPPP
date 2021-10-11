@@ -4,6 +4,7 @@
 **/**/run.sh.*
 **/**/build.sh.*
 **/**/*.prj/**
+**/**/nohup.out
 
 # Prerequisites
 *.d
