@@ -7,7 +7,9 @@
 
 #include <CL/sycl.hpp>
 #include <array>
+#include <iostream>
 using namespace sycl;
+using namespace std;
 constexpr int N = 42;
 int main() {
   queue Q;
