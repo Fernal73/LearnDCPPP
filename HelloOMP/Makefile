@@ -39,4 +39,4 @@ else
 endif
 
 clean: 
-	rm -f $(EXE_NAME) $(MM_EXE_NAME) run.sh.* build.sh.*
+	rm -f $(EXE_NAME) $(MM_EXE_NAME) run*.sh.* build*.sh.*

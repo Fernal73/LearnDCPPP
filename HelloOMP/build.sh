@@ -3,4 +3,4 @@
 #PBS -l nodes=2:ppn=2
 source /opt/intel/inteloneapi/setvars.sh
 make clean
-make all
+make build
