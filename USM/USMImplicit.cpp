@@ -8,7 +8,7 @@ int main() {
   int *shared_array = malloc_shared<int>(N, Q);
   for (int i = 0; i < N; i++) {
     // Initialize hostArray on host
-    host_array[i] = i;
+    host_array[i] = N;
   }
   // We will learn how to simplify this example later
   Q.submit([&](handler &h) {
@@ -21,7 +21,7 @@ int main() {
   for (int i = 0; i < N; i++) {
     // access sharedArray on host
     host_array[i] = shared_array[i];
-    std::cout << host_array[i];
+    std::cout << host_array[i] << " ";
   }
   std::cout << std::endl;
   free(shared_array, Q);
