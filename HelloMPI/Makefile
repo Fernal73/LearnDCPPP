@@ -23,7 +23,8 @@ run:
 ifeq ($(HOSTNAME),$(LOCALHOST))
 	mpirun --allow-run-as-root --hostfile hosts -np 5 $(EXE_NAME)
 else
-	echo "Cannot execute run locally in ssh shell. Use qsub"
+	echo "Cannot execute run locally in ssh shell. Using qsub..."
+	./submitqsub
 endif
 
 clean: 
