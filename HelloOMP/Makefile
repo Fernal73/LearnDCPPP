@@ -6,10 +6,12 @@ CXX = gcc
 CXXFLAGS = -O2 -g -std=c++17
 
 EXE_NAME = HelloOMP
+MM_EXE_NAME = MatMul
 SOURCES = HelloOMP.cpp
+MM_SOURCES = MatMul.cpp
 
 all: build
-.PHONY: all clean run build
+.PHONY: all clean run build build_mm
 
 build:
 ifeq ($(HOSTNAME),$(LOCALHOST))
@@ -18,6 +20,9 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 else
 	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -o $(EXE_NAME) $(SOURCES)
 endif
+
+build_mm:
+	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -fopenmp-targets=spir64 -o $(MM_EXE_NAME) $(MM_SOURCES)
 
 run: 
 ifeq ($(HOSTNAME),$(LOCALHOST))
@@ -28,4 +33,4 @@ else
 endif
 
 clean: 
-	rm -f $(EXE_NAME) run.sh.* build.sh.*
+	rm -f $(EXE_NAME) $(MM_EXE_NAME) run.sh.* build.sh.*

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+id=$(qsub -d . buildmm.sh \
+  | awk -F. '{print $1}')
+qsub -d . runmm.sh -W depend=afterok:$id
+qstat

@@ -2,4 +2,5 @@
 OLDPATH=$PATH
 export PATH=$PATH:~/LearnDPCpp/bin
 buildrunq
+./buildrunmm
 export PATH=$OLDPATH
