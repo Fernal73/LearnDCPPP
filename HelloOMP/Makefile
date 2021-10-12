@@ -26,12 +26,15 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 	$(CXX) $(CXXFLAGS) -fopenmp -o $(MM_EXE_NAME) $(MM_SOURCES)
 else
 	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -fopenmp-targets=spir64 -o $(MM_EXE_NAME) $(MM_SOURCES)
+endif
 
 run: 
 ifeq ($(HOSTNAME),$(LOCALHOST))
 	./$(EXE_NAME)
+	./$(MM_EXE_NAME)
 else
 	./$(EXE_NAME)
+	./$(MM_EXE_NAME)
 	./submitqsub
 endif
 
