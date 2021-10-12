@@ -10,7 +10,7 @@ MM_EXE_NAME = MatMul
 SOURCES = HelloOMP.cpp
 MM_SOURCES = MatMul.cpp
 
-all: build
+all: build build_mm
 .PHONY: all clean run build build_mm
 
 build:
