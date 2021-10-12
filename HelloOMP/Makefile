@@ -22,6 +22,9 @@ else
 endif
 
 build_mm:
+ifeq ($(HOSTNAME),$(LOCALHOST))
+	$(CXX) $(CXXFLAGS) -fopenmp -o $(MM_EXE_NAME) $(MM_SOURCES)
+else
 	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -fopenmp-targets=spir64 -o $(MM_EXE_NAME) $(MM_SOURCES)
 
 run: 
