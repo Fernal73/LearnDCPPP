@@ -23,7 +23,7 @@ int main() {
     host_array[i] = shared_array[i];
     std::cout << host_array[i];
   }
-  std::cout << endl;
+  std::cout << std::endl;
   free(shared_array, Q);
   free(host_array, Q);
   return 0;
