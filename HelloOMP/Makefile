@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 HOSTNAME := $(shell hostname)
 LOCALHOST = localhost
-INTEL_CXX = icc
+INTEL_CXX = icx
 CXX = gcc
 CXXFLAGS = -O2 -g -std=c++17
 
