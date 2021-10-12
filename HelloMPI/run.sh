@@ -9,3 +9,4 @@ echo "$PBS_NODEFILE"
 cat "$PBS_NODEFILE"
 mpirun -machinefile $PBS_NODEFILE ./HelloMPI
 mpirun -machinefile $PBS_NODEFILE ./HelloMPI2
+mpirun -machinefile $PBS_NODEFILE ./SendRecv

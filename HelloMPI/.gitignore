@@ -1,2 +1,4 @@
-HelloMPI
-HelloMPI.fpga*
+HelloMPI*
+HelloMPI*.fpga*
+SendRecv
+SendRecv.fpga
