@@ -2,3 +2,4 @@ HelloMPI*
 HelloMPI*.fpga*
 SendRecv
 SendRecv.fpga
+nodes.txt
