@@ -34,8 +34,8 @@ int main() {
   Q.wait();
 
   for (int i = 0; i < N; i++)
-    cout << host_array[i] << " ";
-  cout << endl;
+    std::cout << host_array[i] << " ";
+  std::cout << std::endl;
   free(device_array, Q);
   return 0;
 }
