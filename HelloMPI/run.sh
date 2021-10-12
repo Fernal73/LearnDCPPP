@@ -9,5 +9,5 @@ echo "$PBS_NODEFILE"
 cat "$PBS_NODEFILE"
 mpirun -machinefile $PBS_NODEFILE ./HelloMPI
 mpirun -machinefile $PBS_NODEFILE ./HelloMPI2
-cat "$PBS_NODEFILE" | head 2 > nodes.txt
+cat "$PBS_NODEFILE" | head -n 2 > nodes.txt
 mpirun -machinefile nodes.txt ./SendRecv
