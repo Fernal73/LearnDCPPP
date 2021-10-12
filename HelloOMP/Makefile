@@ -24,8 +24,7 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 	./$(EXE_NAME)
 else
 	./$(EXE_NAME)
-	#echo "Cannot execute run locally in ssh shell. Using qsub..."
-	#./submitqsub
+	./submitqsub
 endif
 
 clean: 
