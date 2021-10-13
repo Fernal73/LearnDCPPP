@@ -7,4 +7,4 @@ pwd
 echo Launching the parallel job from mother superior $(hostname)...
 echo "$PBS_NODEFILE"
 cat "$PBS_NODEFILE"
-mpirun -machinefile $PBS_NODEFILE ./qsortmpi
+mpirun -machinefile $PBS_NODEFILE -prepend-rank -prepend-pattern ./qsortmpi
