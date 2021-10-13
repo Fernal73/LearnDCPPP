@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
   int m, n = N;
   int id, p;
   int s;
+  int size;
   int i;
   int step;
   MPI_Status status;
@@ -117,7 +118,7 @@ int main(int argc, char **argv) {
     printf("n = %d\n",n);
     printf("chunk size = %d\n",s);
     printf("remainder size = %d\n",r);
-    int size = r != 0 ? n + p - r: n;
+    size = r != 0 ? n + p - r: n;
     printf("data size = %d\n",size );
     data = (int *)malloc(size * sizeof(int));
     for (i = 0; i < n; i++)
@@ -175,13 +176,13 @@ int main(int argc, char **argv) {
     FILE *fout;
 
     stopTime = clock();
-    printf("%d; %d processors; %f secs\n", s, p,
+    printf("%d; %d processors; %f secs\n", n, p,
            (stopTime - startTime) / CLOCKS_PER_SEC);
 
     showElapsed(id, "opening out file");
     fout = fopen("result", "w");
-    for (i = 0; i < s; i++)
-      fprintf(fout, "%d ", chunk[i]);
+    for (i = size - n; i < s; i++)
+      fprintf(fout, "%d\n", chunk[i]);
     fclose(fout);
     showElapsed(id, "closed out file");
   }
