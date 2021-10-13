@@ -1,5 +1,3 @@
-HelloMPI*
-HelloMPI*.fpga*
-SendRecv
-SendRecv.fpga
-nodes.txt
+qsortmpi
+qsortmpi*.fpga*
+result
