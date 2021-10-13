@@ -129,30 +129,26 @@ int main(int argc, char **argv) {
       s++;
     printf("chunk size = %d\n",s);
     showElapsed(id, "generated the random numbers");
-
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    printf("broadcast s = %d",s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
-
     showElapsed(id, "scattered data");
-
     qsortmpi(chunk, 0, s - 1);
-
     showElapsed(id, "sorted");
   } else {
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    printf("broadcast s = %d",s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
-
-    showElapsed(id, "got data");
-
+    showElapsed(id, "scatter data");
     qsortmpi(chunk, 0, s - 1);
-
     showElapsed(id, "sorted");
   }
 
   step = 1;
   while (step < p) {
+    printf("id = %d,step = %d\n",id,step);
     if (id % (2 * step) == 0) {
       if (id + step < p) {
         MPI_Recv(&m, 1, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
@@ -162,6 +158,7 @@ int main(int argc, char **argv) {
         chunk = merge(chunk, s, other, m);
         showElapsed(id, "merged data");
         s = s + m;
+        printf("s = %d after merge\n",s);
       }
     } else {
       int near = id - step;
@@ -170,7 +167,7 @@ int main(int argc, char **argv) {
       showElapsed(id, "sent merge data");
       break;
     }
-    step = step * 2;
+    step = step<<1;
   }
   if (id == 0) {
     FILE *fout;
