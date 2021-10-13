@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 HOSTNAME := $(shell hostname)
 LOCALHOST = localhost
-INTEL_CXX = mpiicpc
+INTEL_CXX = mpiicc
 CXX = mpicc
 CXXFLAGS = -O2 -g -std=c17
 
