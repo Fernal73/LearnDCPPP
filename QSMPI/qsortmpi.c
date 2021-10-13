@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
     showElapsed(id, "opening out file");
     fout = fopen("result", "w");
     for (i = 0; i < s; i++)
-      fprintf(fout, "%d\n", chunk[i]);
+      fprintf(fout, "%d ", chunk[i]);
     fclose(fout);
     showElapsed(id, "closed out file");
   }
