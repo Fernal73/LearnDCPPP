@@ -110,13 +110,13 @@ int main(int argc, char **argv) {
 
   if (id == 0) {
     int r;
-    srandom(clock());
+    srand(clock());
 
     s = n / p;
     r = n % p;
     data = (int *)malloc((n + s - r) * sizeof(int));
     for (i = 0; i < n; i++)
-      data[i] = random();
+      data[i] = rand();
     if (r != 0) {
       for (i = n; i < n + s - r; i++)
         data[i] = 0;
