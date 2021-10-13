@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
     printf("chunk size = %d\n",s);
     showElapsed(id, "generated the random numbers");
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    printf("broadcast s = %d",s);
+    printf("broadcast s = %d\n",s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
     showElapsed(id, "scattered data");
@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
     showElapsed(id, "sorted");
   } else {
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    printf("broadcast s = %d",s);
+    printf("broadcast s = %d\n",s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
     showElapsed(id, "scatter data");
