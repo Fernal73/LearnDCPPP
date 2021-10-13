@@ -21,7 +21,7 @@ endif
 
 run: 
 ifeq ($(HOSTNAME),$(LOCALHOST))
-	mpirun --allow-run-as-root --hostfile hosts -np 5 $(EXE_NAME)
+	mpirun --allow-run-as-root --hostfile hosts $(EXE_NAME)
 else
 	echo "Cannot execute run locally in ssh shell. Using qsub..."
 	./submitqsub

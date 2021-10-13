@@ -114,14 +114,19 @@ int main(int argc, char **argv) {
 
     s = n / p;
     r = n % p;
-    data = (int *)malloc((n + s - r) * sizeof(int));
+    printf("n = %d\n",n);
+    printf("chunk size = %d\n",s);
+    printf("remainder size = %d\n",r);
+    int size = r != 0 ? n + p - r: n;
+    printf("data size = %d\n",size );
+    data = (int *)malloc(size * sizeof(int));
     for (i = 0; i < n; i++)
       data[i] = rand();
-    if (r != 0) {
-      for (i = n; i < n + s - r; i++)
+    for (i = n; i < size; i++)
         data[i] = 0;
-      s = s + 1;
-    }
+    if (size > n)
+      s++;
+    printf("chunk size = %d\n",s);
     showElapsed(id, "generated the random numbers");
 
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
