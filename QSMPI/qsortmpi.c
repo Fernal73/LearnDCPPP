@@ -146,25 +146,31 @@ int main(int argc, char **argv) {
     showElapsed(id, "sorted");
   }
 
+  // binary tree for merging
+  // number of nodes halve as they are merged
   step = 1;
   while (step < p) {
     printf("id = %d,step = %d\n",id,step);
+    // is it even node?
     if (id % (2 * step) == 0) {
+      /// check if node exceeds processor count
       if (id + step < p) {
         MPI_Recv(&m, 1, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
         other = (int *)malloc(m * sizeof(int));
         MPI_Recv(other, m, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
-        showElapsed(id, "got merge data");
+        showElapsed(id, "received merged data");
         chunk = merge(chunk, s, other, m);
         showElapsed(id, "merged data");
         s = s + m;
         printf("s = %d after merge\n",s);
       }
     } else {
+      // pass merged data to left node
       int near = id - step;
+      printf("Near node = %d\n",near);
       MPI_Send(&s, 1, MPI_INT, near, 0, MPI_COMM_WORLD);
       MPI_Send(chunk, s, MPI_INT, near, 0, MPI_COMM_WORLD);
-      showElapsed(id, "sent merge data");
+      showElapsed(id, "sent merged data");
       break;
     }
     step = step<<1;
