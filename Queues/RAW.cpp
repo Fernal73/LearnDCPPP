@@ -16,7 +16,8 @@ for (int i = 0; i < N; i++) {
 } 
 
 queue Q;
-// We will learn how to simplify this example later buffer A{a};
+// We will learn how to simplify this example later 
+buffer A{a};
 buffer B{b};
 buffer C{c};
 Q.submit([&](handler &h) { 
