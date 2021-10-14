@@ -41,7 +41,8 @@ int main() {
     h.parallel_for( // computeC
         N, [=](id<1> i) { accC[i] = accB[i] + 2; });
   });
-  // read C on host host_accessor host_accC(C, read_only);
+  // read C on host
+  host_accessor host_accC(C, read_only);
   for (int i = 0; i < N; i++) {
     std::cout << host_accC[i] << " ";
   }
