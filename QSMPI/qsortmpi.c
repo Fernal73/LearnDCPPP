@@ -7,20 +7,11 @@
 
 /** https://site.sci.hkbu.edu.hk/tdgc/tutorial/ExpClusterComp/qsort/qsort.c **/
 /* quicksort */
+#include "qsortmpi.h"
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
-#define N 1000000
-
-void showElapsed(int id, char *m);
-void showVector(int *v, int n, int id);
-int *merge(int *v1, int n1, int *v2, int n2);
-void swap(int *v, int i, int j);
-void qsortmpi(int *v, int left, int right);
-
-double startTime, stopTime;
 
 void showElapsed(int id, char *m) {
   printf("%d: %s %f secs\n", id, m, (clock() - startTime) / CLOCKS_PER_SEC);
@@ -115,22 +106,22 @@ int main(int argc, char **argv) {
 
     s = n / p;
     r = n % p;
-    printf("n = %d\n",n);
-    printf("chunk size = %d\n",s);
-    printf("remainder size = %d\n",r);
-    size = r != 0 ? n + p - r: n;
-    printf("data size = %d\n",size );
+    printf("n = %d\n", n);
+    printf("chunk size = %d\n", s);
+    printf("remainder size = %d\n", r);
+    size = r != 0 ? n + p - r : n;
+    printf("data size = %d\n", size);
     data = (int *)malloc(size * sizeof(int));
     for (i = 0; i < n; i++)
       data[i] = rand();
     for (i = n; i < size; i++)
-        data[i] = 0;
+      data[i] = 0;
     if (size > n)
       s++;
-    printf("chunk size = %d\n",s);
+    printf("chunk size = %d\n", s);
     showElapsed(id, "generated the random numbers");
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    printf("broadcast s = %d\n",s);
+    printf("broadcast s = %d\n", s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
     showElapsed(id, "scattered data");
@@ -138,7 +129,7 @@ int main(int argc, char **argv) {
     showElapsed(id, "sorted");
   } else {
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    printf("broadcast s = %d\n",s);
+    printf("broadcast s = %d\n", s);
     chunk = (int *)malloc(s * sizeof(int));
     MPI_Scatter(data, s, MPI_INT, chunk, s, MPI_INT, 0, MPI_COMM_WORLD);
     showElapsed(id, "scatter data");
@@ -148,32 +139,37 @@ int main(int argc, char **argv) {
 
   // binary tree for merging
   // number of nodes halve as they are merged
+  // step will take values 1,2,4,8 and so on
   step = 1;
   while (step < p) {
-    printf("id = %d,step = %d\n",id,step);
-    // is it even node?
-    if (id % (2 * step) == 0) {
-      /// check if node exceeds processor count
+    printf("id = %d,step = %d\n", id, step);
+    // double step value
+    int next_step = step << 1;
+    printf("next_step = %d\n",next_step);
+    // is it merging node?
+    if (id % next_step == 0) {
       if (id + step < p) {
         MPI_Recv(&m, 1, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
+        printf("m = %d\n", m);
+        printf("id + step = %d\n", id + step);
         other = (int *)malloc(m * sizeof(int));
         MPI_Recv(other, m, MPI_INT, id + step, 0, MPI_COMM_WORLD, &status);
         showElapsed(id, "received merged data");
         chunk = merge(chunk, s, other, m);
         showElapsed(id, "merged data");
         s = s + m;
-        printf("s = %d after merge\n",s);
+        printf("s = %d after merge\n", s);
       }
     } else {
-      // pass merged data to left node
+      // pass data to left node for merging
       int near = id - step;
-      printf("Near node = %d\n",near);
+      printf("Near node = %d\n", near);
       MPI_Send(&s, 1, MPI_INT, near, 0, MPI_COMM_WORLD);
       MPI_Send(chunk, s, MPI_INT, near, 0, MPI_COMM_WORLD);
       showElapsed(id, "sent merged data");
       break;
     }
-    step = step<<1;
+    step = next_step;
   }
   if (id == 0) {
     FILE *fout;
