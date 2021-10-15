@@ -4,7 +4,6 @@ CXXFLAGS = -O2 -g -std=c++17
 SRC := vaddbuffers.cpp
 USM_SRC := vaddusm.cpp
 
-all: fpga_emu fpga_emu_usm hw hw_usm
 .PHONY: fpga_emu run_emu fpga_emu_usm run_emu_usm clean 
 
 fpga_emu: vaddbuffers.fpga_emu

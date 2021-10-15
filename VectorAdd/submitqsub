@@ -3,4 +3,5 @@ OLDPATH=$PATH
 export PATH=$PATH:~/LearnDPCpp/bin
 buildrunq
 buildrunq buildfpga.sh runfpga.sh
+buildrunq buildfpgahw.sh runfpgahw.sh
 export PATH=$OLDPATH
