@@ -24,6 +24,7 @@ endif
 build_mm:
 ifeq ($(HOSTNAME),$(LOCALHOST))
 	$(CXX) $(CXXFLAGS) -fopenmp -o $(MM_EXE_NAME) $(MM_SOURCES)
+	termux-elf-cleaner $(MM_EXE_NAME) > /dev/null
 else
 	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -fopenmp-targets=spir64 -o $(MM_EXE_NAME) $(MM_SOURCES)
 endif
