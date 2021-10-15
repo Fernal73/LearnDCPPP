@@ -1,2 +1,6 @@
 vaddbuffers
+vaddbuffers*fpga*
 vaddusm
+vaddusm*fpga*
+build*.sh.*
+run*.sh.*
