@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
-id=$(qsub -d . build.sh \
+buildfile="build.sh"
+runfile="run.sh"
+if [ "$1" ]
+then
+  buildfile="$1"
+fi
+if [ "$2" ]
+then
+  runfile="$2"
+fi
+
+id=$(qsub -d . "$buildfile" \
   | awk -F. '{print $1}')
-qsub -d . run.sh -W depend=afterok:$id
+qsub -d . "$runfile" -W depend=afterok:$id
 qstat
