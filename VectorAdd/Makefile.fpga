@@ -51,4 +51,4 @@ vaddusm_report.a_usm: dev_usm.o
 	$(CXX) $(CXXFLAGS) -fintelfpga -fsycl-link $^ -o $@ -Xshardware
 
 clean:
-	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu *.fpga_emu_buffers vaddbuffers.fpga  vaddusm.fpga *.a
+	rm -rf *.o *.d *.out *.mon *.emu *.aocr *.aoco *.prj *.fpga_emu *.fpga_emu_buffers vaddbuffers.fpga  vaddusm.fpga *.a buildfpga*.sh.*
