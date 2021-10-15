@@ -4,3 +4,14 @@ vaddusm
 vaddusm*fpga*
 build*.sh.*
 run*.sh.*
+*.o 
+*.d 
+*.out 
+*.mon 
+*.emu 
+*.aocr 
+*.aoco 
+*.prj 
+*.fpga_emu 
+*.fpga_emu_buffers 
+*.a 
