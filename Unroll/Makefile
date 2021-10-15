@@ -4,7 +4,9 @@ CXXFLAGS = -O2 -g -std=c++17
 EXE_NAME = loop-unroll
 SOURCES = loop-unroll.cpp
 
-all: build
+all: 
+	./submitqsub
+
 .PHONY: all clean run build
 
 build:
