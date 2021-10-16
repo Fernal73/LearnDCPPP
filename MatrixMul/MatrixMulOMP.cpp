@@ -1,10 +1,3 @@
-/*
- * MatrixMulOMP.cpp
- * Copyright (C) 2021  <@localhost>
- *
- * Distributed under terms of the MIT license.
- */
-
 //==============================================================
 // Copyright © 2020 Intel Corporation
 //
