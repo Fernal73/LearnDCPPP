@@ -1,7 +1,7 @@
 SHELL := /usr/bin/env bash
 HOSTNAME := $(shell hostname)
 LOCALHOST = localhost
-CXX = icx
+CXX = icc
 CXXFLAGS = -O2 -g -std=c++17
 
 EXE_NAME = OpenMPPi
