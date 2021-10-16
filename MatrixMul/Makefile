@@ -1,7 +1,7 @@
 CXX = dpcpp
 CXX_OMP = icpx
 CXXFLAGS = -O2 -g -std=c++17
-CXXFLAGS_OMP = -fiopenmp -fopenmp-targets=spir64 -D__STRICT_ANSI__ -g -o
+CXXFLAGS_OMP = -fiopenmp -fopenmp-targets=spir64 -D__STRICT_ANSI__ -g
 
 EXE_NAME = MatrixMulOMP
 SOURCES = MatrixMulOMP.cpp
