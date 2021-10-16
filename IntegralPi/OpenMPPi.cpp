@@ -10,6 +10,7 @@
 // dpc_common.hpp can be found in the dev-utilities include folder.
 // e.g., $ONEAPI_ROOT/dev-utilities//include/dpc_common.hpp
 #include "dpc_common.hpp"
+#include <CL/sycl.hpp>
 
 // cpu_seq_calc_pi is a simple sequential CPU routine
 // that calculates all the slices and then
