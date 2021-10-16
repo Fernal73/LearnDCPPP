@@ -4,5 +4,5 @@
 
 cd $PBS_O_WORKDIR
 pwd
-echo Launching the parallel job from mother superior $(hostname)...
-./HelloOMP
+echo Launching the parallel job from mother superior $(hostname)
+make run
