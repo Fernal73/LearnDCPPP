@@ -6,10 +6,7 @@
 // precision library
 #include <iomanip>
 #include <iostream>
-
-// dpc_common.hpp can be found in the dev-utilities include folder.
-// e.g., $ONEAPI_ROOT/dev-utilities//include/dpc_common.hpp
-#include "dpc_common.hpp"
+#include <ctime>
 
 // cpu_seq_calc_pi is a simple sequential CPU routine
 // that calculates all the slices and then
@@ -65,10 +62,11 @@ float openmp_device_calc_pi(int num_steps) {
   return pi;
 }
 
-int main(int argc, char **argv) {
+int main(int /*argc*/, char** /*argv*/) {
   int num_steps = 1000000;
   printf("Number of steps is %d\n", num_steps);
   float pi;
+  time_t start, finish;
 
   // Due to the overhead associated with
   // JIT, run the offload calculation once
@@ -76,28 +74,28 @@ int main(int argc, char **argv) {
   // time is measured the 2nd time you run it.
   pi = openmp_device_calc_pi(num_steps);
 
-  dpc_common::TimeInterval T;
+  time(&start);
   pi = cpu_seq_calc_pi(num_steps);
-  auto stop = T.Elapsed();
+  time(&finish);
   std::cout << "Cpu Seq calc: \t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << stop << " seconds"
+  std::cout << " in " << difftime(start,finish) << " seconds"
             << "\n";
 
-  dpc_common::TimeInterval T2;
+  time(&start);
   pi = openmp_host_calc_pi(num_steps);
-  auto stop2 = T2.Elapsed();
+  time(&finish);
   std::cout << "Host OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << stop2 << " seconds"
+  std::cout << " in " << difftime(start,finish) << " seconds"
             << "\n";
 
-  dpc_common::TimeInterval T3;
+  time(&start);
   pi = openmp_device_calc_pi(num_steps);
-  auto stop3 = T3.Elapsed();
+  time(&finish);
   std::cout << "Offload OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << stop3 << " seconds"
+  std::cout << " in " << difftime(start,finish) << " seconds"
             << "\n";
 
   std::cout << "success\n";
