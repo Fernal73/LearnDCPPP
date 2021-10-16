@@ -8,7 +8,9 @@ CXXFLAGS = -O2 -g -std=c++17
 EXE_NAME = OpenMPPi
 SOURCES = OpenMPPi.cpp
 
-all: build
+all: 
+	./submitqsub
+
 .PHONY: all clean run build
 
 build:
