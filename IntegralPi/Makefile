@@ -12,7 +12,7 @@ all: build
 .PHONY: all clean run build
 
 build:
-	./submitqsub
+	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -o $(EXE_NAME) $(SOURCES)
 
 run: 
 	./$(EXE_NAME)
