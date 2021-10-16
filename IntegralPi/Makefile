@@ -1,8 +1,7 @@
 SHELL := /usr/bin/env bash
 HOSTNAME := $(shell hostname)
 LOCALHOST = localhost
-INTEL_CXX = icc
-CXX = g++
+CXX = icc
 CXXFLAGS = -O2 -g -std=c++17
 
 EXE_NAME = OpenMPPi
@@ -14,7 +13,7 @@ all:
 .PHONY: all clean run build
 
 build:
-	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -o $(EXE_NAME) $(SOURCES)
+	$(CXX) $(CXXFLAGS) -qopenmp -o $(EXE_NAME) $(SOURCES)
 
 run: 
 	./$(EXE_NAME)
