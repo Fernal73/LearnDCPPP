@@ -91,7 +91,7 @@ int main(int /*argc*/, char ** /*argv*/) {
   t1 = Clock::now();
   std::cout << "Host OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << ns.count() << " milliseconds"
+  std::cout << " in " << ns.count() << " nanoseconds"
             << "\n";
 
   t0 = Clock::now();
@@ -99,7 +99,7 @@ int main(int /*argc*/, char ** /*argv*/) {
   t1 = Clock::now();
   std::cout << "Offload OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << ns.count() << " milliseconds"
+  std::cout << " in " << ns.count() << " nanoseconds"
             << "\n";
 
   std::cout << "success\n";
