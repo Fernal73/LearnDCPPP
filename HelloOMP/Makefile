@@ -32,7 +32,6 @@ endif
 run: 
 	./$(EXE_NAME)
 	./$(MM_EXE_NAME)
-endif
 
 clean: 
 	rm -f $(EXE_NAME) $(MM_EXE_NAME) run*.sh.* build*.sh.*
