@@ -19,8 +19,8 @@ float cpu_seq_calc_pi(int num_steps) {
   float x;
   float pi;
   float sum = 0.0;
-  for (int i = 1; i < num_steps; i++) {
-    x = ((float)i - 0.5f) * step;
+  for (int i = 0; i < num_steps; i++) {
+    x = ((float)i + 0.5f) * step;
     sum = sum + 4.0f / (1.0f + x * x);
   }
   pi = sum * step;
@@ -38,8 +38,8 @@ float openmp_host_calc_pi(int num_steps) {
   float pi = 0.0;
   float sum = 0.0;
 #pragma omp parallel for reduction(+ : sum)
-  for (int i = 1; i < num_steps; i++) {
-    float x = ((float)i - 0.5f) * step;
+  for (int i = 0; i < num_steps; i++) {
+    float x = ((float)i + 0.5f) * step;
     sum = sum + 4.0f / (1.0f + x * x);
   }
   pi = step * sum;
