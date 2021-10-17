@@ -24,7 +24,6 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 	./$(EXE_NAME)
 else
 	./$(EXE_NAME)
-	./submitqsub
 endif
 
 clean: 
