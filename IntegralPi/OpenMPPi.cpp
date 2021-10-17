@@ -6,7 +6,10 @@
 // precision library
 #include <iomanip>
 #include <iostream>
-#include <ctime>
+#include <chrono>
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::milliseconds milliseconds;
 
 // cpu_seq_calc_pi is a simple sequential CPU routine
 // that calculates all the slices and then
@@ -66,7 +69,6 @@ int main(int /*argc*/, char** /*argv*/) {
   int num_steps = 1000000;
   printf("Number of steps is %d\n", num_steps);
   float pi;
-  time_t start, finish;
 
   // Due to the overhead associated with
   // JIT, run the offload calculation once
@@ -74,28 +76,30 @@ int main(int /*argc*/, char** /*argv*/) {
   // time is measured the 2nd time you run it.
   pi = openmp_device_calc_pi(num_steps);
 
-  time(&start);
+
+    Clock::time_point t0 = Clock::now();
   pi = cpu_seq_calc_pi(num_steps);
-  time(&finish);
+    Clock::time_point t1 = Clock::now();
+    milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
   std::cout << "Cpu Seq calc: \t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << difftime(start,finish) << " seconds"
+  std::cout << " in " << ms.count() << " milliseconds"
             << "\n";
 
-  time(&start);
+    t0 = Clock::now();
   pi = openmp_host_calc_pi(num_steps);
-  time(&finish);
+    t1 = Clock::now();
   std::cout << "Host OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << difftime(start,finish) << " seconds"
+  std::cout << " in " << ms.count() << " milliseconds"
             << "\n";
 
-  time(&start);
+    t0 = Clock::now();
   pi = openmp_device_calc_pi(num_steps);
-  time(&finish);
+    t1 = Clock::now();
   std::cout << "Offload OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << difftime(start,finish) << " seconds"
+  std::cout << " in " << ms.count() << " milliseconds"
             << "\n";
 
   std::cout << "success\n";
