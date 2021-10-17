@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+OLDPATH=$PATH
+export PATH=$PATH:~/LearnDPCpp/bin
+buildrunq
+export PATH=$OLDPATH
