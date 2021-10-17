@@ -3,7 +3,7 @@ HOSTNAME := $(shell hostname)
 LOCALHOST = localhost
 INTEL_CXX = icc
 CXX = g++
-CXXFLAGS = -O2 -g -std=c++17
+CXXFLAGS = -O2 -g -std=c++17 -fopenmp
 
 EXE_NAME = OpenMPPi
 SOURCES = OpenMPPi.cpp
@@ -13,10 +13,10 @@ all: build
 
 build:
 ifeq ($(HOSTNAME),$(LOCALHOST))
-	$(CXX) $(CXXFLAGS) -fopenmp -o $(EXE_NAME) $(SOURCES)
+	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 	termux-elf-cleaner $(EXE_NAME) > /dev/null
 else
-	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -o $(EXE_NAME) $(SOURCES)
+	$(INTEL_CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 endif
 
 run: 
