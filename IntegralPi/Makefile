@@ -20,12 +20,7 @@ else
 endif
 
 run: 
-ifeq ($(HOSTNAME),$(LOCALHOST))
 	./$(EXE_NAME)
-else
-	./$(EXE_NAME)
-	./submitqsub
-endif
 
 clean: 
 	rm -f $(EXE_NAME) run*.sh.* build*.sh.*

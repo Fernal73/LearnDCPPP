@@ -1,4 +1,3 @@
-HelloOMP
-HelloOMP.fpga*
-MatMul
-MatMul.fpga*
+OpenMPPi
+run.sh.*
+build.sh.*
