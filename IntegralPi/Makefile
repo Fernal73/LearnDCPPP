@@ -16,7 +16,7 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 	termux-elf-cleaner $(EXE_NAME) > /dev/null
 else
-	$(INTEL_CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
+	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -parallel -o $(EXE_NAME) $(SOURCES)
 endif
 
 run: 
