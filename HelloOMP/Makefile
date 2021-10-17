@@ -30,13 +30,8 @@ else
 endif
 
 run: 
-ifeq ($(HOSTNAME),$(LOCALHOST))
 	./$(EXE_NAME)
 	./$(MM_EXE_NAME)
-else
-	./$(EXE_NAME)
-	./$(MM_EXE_NAME)
-	./submitqsub
 endif
 
 clean: 
