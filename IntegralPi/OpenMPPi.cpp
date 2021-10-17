@@ -80,10 +80,10 @@ int main(int /*argc*/, char** /*argv*/) {
     Clock::time_point t0 = Clock::now();
   pi = cpu_seq_calc_pi(num_steps);
     Clock::time_point t1 = Clock::now();
-    milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
+    std::chrono::nanoseconds ns = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0);
   std::cout << "Cpu Seq calc: \t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << ms.count() << " milliseconds"
+  std::cout << " in " << ns.count() << " nanoseconds"
             << "\n";
 
     t0 = Clock::now();
@@ -91,7 +91,7 @@ int main(int /*argc*/, char** /*argv*/) {
     t1 = Clock::now();
   std::cout << "Host OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << ms.count() << " milliseconds"
+  std::cout << " in " << ns.count() << " milliseconds"
             << "\n";
 
     t0 = Clock::now();
@@ -99,7 +99,7 @@ int main(int /*argc*/, char** /*argv*/) {
     t1 = Clock::now();
   std::cout << "Offload OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
-  std::cout << " in " << ms.count() << " milliseconds"
+  std::cout << " in " << ns.count() << " milliseconds"
             << "\n";
 
   std::cout << "success\n";
