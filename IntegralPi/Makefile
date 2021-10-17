@@ -4,6 +4,7 @@ LOCALHOST = localhost
 INTEL_CXX = icpc
 CXX = g++
 CXXFLAGS = -O2 -g -std=c++17 -fopenmp
+INTEL_CXXFLAGS = -O2 -g -std=c++17 -fiopenmp -fopenmp-targets=spir64 -fsycl
 
 EXE_NAME = OpenMPPi
 SOURCES = OpenMPPi.cpp
@@ -16,7 +17,7 @@ ifeq ($(HOSTNAME),$(LOCALHOST))
 	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 	termux-elf-cleaner $(EXE_NAME) > /dev/null
 else
-	$(INTEL_CXX) $(CXXFLAGS) -qopenmp -parallel -o $(EXE_NAME) $(SOURCES)
+	$(INTEL_CXX) $(INTEL_CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 endif
 
 run: 
