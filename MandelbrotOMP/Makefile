@@ -3,7 +3,7 @@ ifdef perf_num
 	EXTRA_CFLAGS += -D PERF_NUM
 endif
 CXX = icpc
-CFLAGS = -O3 -g -std=c++17 -ipo -qopenmp
+CFLAGS = -O3 -std=c++11 -ipo -qopenmp
 LIBFLAGS := -qopenmp
 SRCDIR := .
 BUILDDIR := .
