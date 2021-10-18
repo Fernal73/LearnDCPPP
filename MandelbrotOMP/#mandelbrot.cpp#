@@ -22,12 +22,41 @@
 //
 // ===============================================================
 
+<<<<<<< HEAD
+// Initial conditions: rectangle (for image) = { (-2.5, -0.875), (1, 0.875) }
+//                     height = 1024
+//                     width = 2048
+//                     max_depth = 100
+//
+// Finds the mandelbrot set given initial conditions, and saves results to a png
+// image. The real portion of the complex number is the x-axis, and the
+// imaginary portion is the y-axis
+//
+// You can optionally compile with GCC and MSC, but just the linear, scalar
+// version will compile and it will not have all optimizations
+
+#include <emmintrin.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <cassert>
+#include <cmath>
+#include <complex>
+
+#include "mandelbrot.hpp"
+#include "timer.hpp"
+//#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb/stb_image_write.h"
+=======
 // Each of these methods calculate how deeply numbers on a complex plane remains
 // in the Mandelbrot set. On top of the serial/scalar version, there is a
 // cilk_for version, a pragma simd version, and a combined cilk_for/pragma simd
 // version
 
 #include "mandelbrot.hpp"
+>>>>>>> development
 
 #include <complex>
 #ifdef __INTEL_COMPILER
