@@ -119,8 +119,13 @@ public:
       }
     }
 
+#ifdef MANDELBROT_USM
+    stbi_write_png("mandelbrotusm.png", row_count, col_count, channel_num, pixels,
+                   col_count * channel_num);
+#else
     stbi_write_png("mandelbrot.png", row_count, col_count, channel_num, pixels,
                    col_count * channel_num);
+#endif
 
     delete[] pixels;
   }
