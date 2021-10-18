@@ -10,6 +10,7 @@
 #include <exception>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 // stb/*.h files can be found in the dev-utilities include folder.
 // e.g., $ONEAPI_ROOT/dev-utilities/<version>/include/stb/*.h
@@ -82,6 +83,7 @@ private:
 
 protected:
   int *data_;
+  string fname;
 
 public:
   Mandel(int row_count, int col_count, int max_iterations)
@@ -120,12 +122,13 @@ public:
     }
 
 #ifdef MANDELBROT_USM
-    stbi_write_png("mandelbrotusm.png", row_count, col_count, channel_num, pixels,
-                   col_count * channel_num);
+    fname = "mandelbrotusm.png";
 #else
-    stbi_write_png("mandelbrot.png", row_count, col_count, channel_num, pixels,
-                   col_count * channel_num);
+    fname = "mandelbrot.png";
 #endif
+
+    stbi_write_png(fname.c_str(), row_count, col_count, channel_num, pixels,
+                   col_count * channel_num);
 
     delete[] pixels;
   }
@@ -133,8 +136,8 @@ public:
   // Use only for debugging with small dimensions.
   void Print() {
     if (p_.row_count() > 128 || p_.col_count() > 128) {
-      cout << " Rendered image output to file: mandelbrot.png "
-              "(output too large to display in text)\n";
+      cout << " Rendered image output to file: " << fname
+           << "(output too large to display in text)\n";
 
       return;
     }
