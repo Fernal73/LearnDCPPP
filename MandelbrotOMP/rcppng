@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+scp devcloud:~/LearnDPCpp/MandelbrotOMP/*.png .
