@@ -43,9 +43,9 @@
 
 #include "mandelbrot.hpp"
 #include "timer.hpp"
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 
 void write_image(const char* filename, int width, int height,
