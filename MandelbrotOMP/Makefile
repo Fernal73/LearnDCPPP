@@ -24,9 +24,9 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 
 run: $(TARGET)
 ifeq ($(shell uname -s),Darwin)
-	@export  DYLD_LIBRARY_PATH="$(LIBRARY_PATH)"; ./$(TARGET) $(option)
+	@export  DYLD_LIBRARY_PATH="$(LIBRARY_PATH)"; ./$(TARGET) $(option) < 0
 else
-	./$(TARGET) $(option)
+	./$(TARGET) $(option) < 0
 endif
 
 clean:
