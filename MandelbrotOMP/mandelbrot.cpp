@@ -22,239 +22,233 @@
 //
 // ===============================================================
 
-// Initial conditions: rectangle (for image) = { (-2.5, -0.875), (1, 0.875) }
-//                     height = 1024
-//                     width = 2048
-//                     max_depth = 100
-//
-// Finds the mandelbrot set given initial conditions, and saves results to a png
-// image. The real portion of the complex number is the x-axis, and the
-// imaginary portion is the y-axis
-//
-// You can optionally compile with GCC and MSC, but just the linear, scalar
-// version will compile and it will not have all optimizations
-
-#include <emmintrin.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <cassert>
-#include <cmath>
-#include <complex>
+// Each of these methods calculate how deeply numbers on a complex plane remains
+// in the Mandelbrot set. On top of the serial/scalar version, there is a
+// cilk_for version, a pragma simd version, and a combined cilk_for/pragma simd
+// version
 
 #include "mandelbrot.hpp"
-#include "timer.hpp"
-//#define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb/stb_image_write.h"
 
-void write_image(const char* filename, int width, int height,
-                 unsigned char* output) {
-  stbi_write_png(filename, width, height, 1, output, width);
-}
-
-int main(int argc, char* argv[]) {
-  double x0 = -2.5;
-  double y0 = -0.875;
-  double x1 = 1;
-  double y1 = 0.875;
-
-  // Modifiable parameters:
-  int height = 1024;
-  int width = 2048;  // Width should be a multiple of 8
-  int max_depth = 100;
-
-  assert(width % 8 == 0);
-
-#ifndef __INTEL_COMPILER
-  CUtilTimer timer;
-  printf(
-      "This example will check how many iterations of z_n+1 = z_n^2 + c a "
-      "complex set will remain bounded.\n");
-#ifdef PERF_NUM
-  double avg_time = 0;
-  for (int i = 0; i < 5; ++i) {
+#include <complex>
+#ifdef __INTEL_COMPILER
+#include <omp.h>
 #endif
-    printf("Starting serial, scalar Mandelbrot...\n");
-    timer.start();
-    unsigned char* output =
-        serial_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-    timer.stop();
-    printf("Calculation finished. Processing time was %.0fms\n",
-           timer.get_time() * 1000.0);
-    printf("Saving image...\n\n");
-    write_image("mandelbrot_serial.png", width, height, output);
-    _mm_free(output);
-#ifdef PERF_NUM
-    avg_time += timer.get_time();
-  }
-  printf("avg time: %.0fms\n", avg_time * 1000.0 / 5);
-#endif
-#else
-  int option = 0;
-#ifndef PERF_NUM
-  // Checks to see if option was given at command line
-  if (argc > 1) {
-    // Prints out instructions and quits
-    if (argv[1][0] == 'h') {
-      printf(
-          "This example will check how many iterations of z_n+1 = z_n^2 + c a "
-          "complex set will remain bounded. Pick which parallel method you "
-          "would like to use.\n");
-      printf(
-          "[0] all tests\n[1] serial/scalar\n[2] OpenMP SIMD\n[3] OpenMP "
-          "Parallel\n[4] OpenMP Both\n  > ");
-      return 0;
-    } else {
-      option = atoi(argv[1]);
-    }
-  }
-  // If no options are given, prompt user to choose an option
-  else {
-    printf(
-        "This example will check how many iterations of z_n+1 = z_n^2 + c a "
-        "complex set will remain bounded. Pick which parallel method you would "
-        "like to use.\n");
-    printf(
-        "[0] all tests\n[1] serial/scalar\n[2] OpenMP SIMD\n[3] OpenMP "
-        "Parallel\n[4] OpenMP Both\n  > ");
-    scanf("%i", &option);
-  }
-#endif  // !PERF_NUM
+#include <emmintrin.h>
+// Description:
+// Determines how deeply points in the complex plane, spaced on a uniform grid,
+// remain in the Mandelbrot set. The uniform grid is specified by the rectangle
+// (x1, y1) - (x0, y0). Mandelbrot set is determined by remaining bounded after
+// iteration of z_n+1 = z_n^2 + c, up to max_depth.
+//
+// Everything is done in a linear, scalar fashion
+//
+// [in]: x0, y0, x1, y1, width, height, max_depth
+// [out]: output (caller must deallocate)
+unsigned char* serial_mandelbrot(double x0, double y0, double x1, double y1,
+                                 int width, int height, int max_depth) {
+  double xstep = (x1 - x0) / width;
+  double ystep = (y1 - y0) / height;
+  unsigned char* output = static_cast<unsigned char*>(
+      _mm_malloc(width * height * sizeof(unsigned char), 64));
 
-  CUtilTimer timer;
-  double serial_time, omp_simd_time, omp_parallel_time, omp_both_time;
-  unsigned char* output;
-  switch (option) {
-    case 0: {
-#ifdef PERF_NUM
-      double avg_time[4] = {0.0};
-      for (int i = 0; i < 5; ++i) {
-#endif
-        printf("\nRunning all tests\n");
+  // Traverse the sample space in equally spaced steps with width * height
+  // samples
+  for (int j = 0; j < height; ++j) {
+    for (int i = 0; i < width; ++i) {
+      double z_real = x0 + i * xstep;
+      double z_imaginary = y0 + j * ystep;
+      double c_real = z_real;
+      double c_imaginary = z_imaginary;
 
-        printf("\nStarting serial, scalar Mandelbrot...\n");
-        timer.start();
-        output = serial_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-        timer.stop();
-        serial_time = timer.get_time();
-        printf("Calculation finished. Processing time was %.0fms\n",
-               serial_time * 1000.0);
-        printf("Saving image as mandelbrot_serial.png\n");
-        write_image("mandelbrot_serial.png", width, height, output);
-        _mm_free(output);
+      // depth should be an int, but the vectorizer will not vectorize,
+      // complaining about mixed data types switching it to double is worth the
+      // small cost in performance to let the vectorizer work
+      double depth = 0;
+      // Figures out how many recurrences are required before divergence, up to
+      // max_depth
+      while (depth < max_depth) {
+        if (z_real * z_real + z_imaginary * z_imaginary > 4.0) {
+          break;  // Escape from a circle of radius 2
+        }
+        double temp_real = z_real * z_real - z_imaginary * z_imaginary;
+        double temp_imaginary = 2.0 * z_real * z_imaginary;
+        z_real = c_real + temp_real;
+        z_imaginary = c_imaginary + temp_imaginary;
 
-        printf("\nStarting OMP SIMD Mandelbrot...\n");
-        timer.start();
-        output = simd_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-        timer.stop();
-        omp_simd_time = timer.get_time();
-        printf("Calculation finished. Processing time was %.0fms\n",
-               omp_simd_time * 1000.0);
-        printf("Saving image as mandelbrot_simd.png\n");
-        write_image("mandelbrot_simd.png", width, height, output);
-        _mm_free(output);
-
-        printf("\nStarting OMP Parallel Mandelbrot...\n");
-        timer.start();
-        output = parallel_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-        timer.stop();
-        omp_parallel_time = timer.get_time();
-        printf("Calculation finished. Processing time was %.0fms\n",
-               omp_parallel_time * 1000.0);
-        printf("Saving image as mandelbrot_parallel.png\n");
-        write_image("mandelbrot_parallel.png", width, height, output);
-        _mm_free(output);
-
-        printf("\nStarting OMP SIMD + Parallel Mandelbrot...\n");
-        timer.start();
-        output = omp_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-        timer.stop();
-        omp_both_time = timer.get_time();
-        printf("Calculation finished. Processing time was %.0fms\n",
-               omp_both_time * 1000.0);
-        printf("Saving image as mandelbrot_simd_parallel.png\n");
-        write_image("mandelbrot_simd_parallel.png", width, height, output);
-        _mm_free(output);
-#ifndef PERF_NUM
+        ++depth;
       }
-#endif
-#ifdef PERF_NUM
-      avg_time[0] += serial_time;
-      avg_time[1] += omp_simd_time;
-      avg_time[2] += omp_parallel_time;
-      avg_time[3] += omp_both_time;
+      output[j * width + i] = static_cast<unsigned char>(
+          static_cast<double>(depth) / max_depth * 255);
     }
-      printf("\navg time (serial)            : %.0fms\n",
-             avg_time[0] * 1000.0 / 5);
-      printf("avg time (simd)              : %.0fms\n",
-             avg_time[1] * 1000.0 / 5);
-      printf("avg time (parallel)          : %.0fms\n",
-             avg_time[2] * 1000.0 / 5);
-      printf("avg time (simd+parallel)     : %.0fms\n\n",
-             avg_time[3] * 1000.0 / 5);
   }
-#endif
-  break;
-
-  case 1: {
-    printf("\nStarting serial, scalar Mandelbrot...\n");
-    timer.start();
-    output = serial_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-    timer.stop();
-    printf("Calculation finished. Processing time was %.0fms\n",
-           timer.get_time() * 1000.0);
-    printf("Saving image as mandelbrot_serial.png\n");
-    write_image("mandelbrot_serial.png", width, height, output);
-    _mm_free(output);
-    break;
-  }
-
-  case 2: {
-    printf("\nStarting OMP SIMD Mandelbrot...\n");
-    timer.start();
-    output = simd_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-    timer.stop();
-    printf("Calculation finished. Processing time was %.0fms\n",
-           timer.get_time() * 1000.0);
-    printf("Saving image as mandelbrot_simd.png\n");
-    write_image("mandelbrot_simd.png", width, height, output);
-    _mm_free(output);
-    break;
-  }
-
-  case 3: {
-    printf("\nStarting OMP Parallel Mandelbrot...\n");
-    timer.start();
-    output = parallel_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-    timer.stop();
-    printf("Calculation finished. Processing time was %.0fms\n",
-           timer.get_time() * 1000.0);
-    printf("Saving image as mandelbrot_parallel.png\n");
-    write_image("mandelbrot_parallel.png", width, height, output);
-    _mm_free(output);
-    break;
-  }
-
-  case 4: {
-    printf("\nStarting OMP Mandelbrot...\n");
-    timer.start();
-    output = omp_mandelbrot(x0, y0, x1, y1, width, height, max_depth);
-    timer.stop();
-    printf("Calculation finished. Processing time was %.0fms\n",
-           timer.get_time() * 1000.0);
-    printf("Saving image as mandelbrot_simd_parallel.png\n");
-    write_image("mandelbrot_simd_parallel.png", width, height, output);
-    _mm_free(output);
-    break;
-  }
-
-  default: {
-    printf("Please pick a valid option\n");
-    break;
-  }
+  return output;
 }
-#endif
-  return 0;
+
+#ifdef __INTEL_COMPILER
+
+#define NUM_THREADS \
+  8  // USER: Experiment with various threadcounts for parallelization
+
+// Description:
+// Determines how deeply points in the complex plane, spaced on a uniform grid,
+// remain in the Mandelbrot set. The uniform grid is specified by the rectangle
+// (x1, y1) - (x0, y0). Mandelbrot set is determined by remaining bounded after
+// iteration of z_n+1 = z_n^2 + c, up to max_depth.
+//
+// Optimized with OpenMP's SIMD constructs.
+//
+// [in]: x0, y0, x1, y1, width, height, max_depth
+// [out]: output (caller must deallocate)
+unsigned char* simd_mandelbrot(double x0, double y0, double x1, double y1,
+                               int width, int height, int max_depth) {
+  double xstep = (x1 - x0) / width;
+  double ystep = (y1 - y0) / height;
+  unsigned char* output = static_cast<unsigned char*>(
+      _mm_malloc(width * height * sizeof(unsigned char), 64));
+
+  // Traverse the sample space in equally spaced steps with width * height
+  // samples
+  for (int j = 0; j < height; ++j) {
+#pragma omp simd  // vectorize code
+    for (int i = 0; i < width; ++i) {
+      double z_real = x0 + i * xstep;
+      double z_imaginary = y0 + j * ystep;
+      double c_real = z_real;
+      double c_imaginary = z_imaginary;
+
+      // depth should be an int, but the vectorizer will not vectorize,
+      // complaining about mixed data types switching it to double is worth the
+      // small cost in performance to let the vectorizer work
+      double depth = 0;
+      // Figures out how many recurrences are required before divergence, up to
+      // max_depth
+      while (depth < max_depth) {
+        if (z_real * z_real + z_imaginary * z_imaginary > 4.0) {
+          break;  // Escape from a circle of radius 2
+        }
+        double temp_real = z_real * z_real - z_imaginary * z_imaginary;
+        double temp_imaginary = 2.0 * z_real * z_imaginary;
+        z_real = c_real + temp_real;
+        z_imaginary = c_imaginary + temp_imaginary;
+
+        ++depth;
+      }
+      output[j * width + i] = static_cast<unsigned char>(
+          static_cast<double>(depth) / max_depth * 255);
+    }
+  }
+  return output;
 }
+
+// Description:
+// Determines how deeply points in the complex plane, spaced on a uniform grid,
+// remain in the Mandelbrot set. The uniform grid is specified by the rectangle
+// (x1, y1) - (x0, y0). Mandelbrot set is determined by remaining bounded after
+// iteration of z_n+1 = z_n^2 + c, up to max_depth.
+//
+// Optimized with OpenMP's parallelization constructs.
+//
+// [in]: x0, y0, x1, y1, width, height, max_depth
+// [out]: output (caller must deallocate)
+unsigned char* parallel_mandelbrot(double x0, double y0, double x1, double y1,
+                                   int width, int height, int max_depth) {
+  double xstep = (x1 - x0) / width;
+  double ystep = (y1 - y0) / height;
+  unsigned char* output = static_cast<unsigned char*>(
+      _mm_malloc(width * height * sizeof(unsigned char), 64));
+
+  omp_set_num_threads(NUM_THREADS);
+  // Traverse the sample space in equally spaced steps with width * height
+  // samples
+#pragma omp parallel for schedule( \
+    dynamic, 1)  // USER: Experiment with static/dynamic partitioning
+  // dynamic partitioning is advantageous as the while loop for calculating
+  // depth makes iterations vary in terms of time.
+  for (int j = 0; j < height; ++j) {
+    for (int i = 0; i < width; ++i) {
+      double z_real = x0 + i * xstep;
+      double z_imaginary = y0 + j * ystep;
+      double c_real = z_real;
+      double c_imaginary = z_imaginary;
+
+      // depth should be an int, but the vectorizer will not vectorize,
+      // complaining about mixed data types switching it to double is worth the
+      // small cost in performance to let the vectorizer work
+      double depth = 0;
+      // Figures out how many recurrences are required before divergence, up to
+      // max_depth
+      while (depth < max_depth) {
+        if (z_real * z_real + z_imaginary * z_imaginary > 4.0) {
+          break;  // Escape from a circle of radius 2
+        }
+        double temp_real = z_real * z_real - z_imaginary * z_imaginary;
+        double temp_imaginary = 2.0 * z_real * z_imaginary;
+        z_real = c_real + temp_real;
+        z_imaginary = c_imaginary + temp_imaginary;
+
+        ++depth;
+      }
+      output[j * width + i] = static_cast<unsigned char>(
+          static_cast<double>(depth) / max_depth * 255);
+    }
+  }
+  return output;
+}
+
+// Description:
+// Determines how deeply points in the complex plane, spaced on a uniform grid,
+// remain in the Mandelbrot set. The uniform grid is specified by the rectangle
+// (x1, y1) - (x0, y0). Mandelbrot set is determined by remaining bounded after
+// iteration of z_n+1 = z_n^2 + c, up to max_depth.
+//
+// Optimized with OpenMP's parallelization and SIMD constructs.
+//
+// [in]: x0, y0, x1, y1, width, height, max_depth
+// [out]: output (caller must deallocate)
+unsigned char* omp_mandelbrot(double x0, double y0, double x1, double y1,
+                              int width, int height, int max_depth) {
+  double xstep = (x1 - x0) / width;
+  double ystep = (y1 - y0) / height;
+  unsigned char* output = static_cast<unsigned char*>(
+      _mm_malloc(width * height * sizeof(unsigned char), 64));
+
+  omp_set_num_threads(NUM_THREADS);
+  // Traverse the sample space in equally spaced steps with width * height
+  // samples
+#pragma omp parallel for schedule( \
+    dynamic, 1)  // USER: Experiment with static/dynamic partitioning
+  // dynamic partitioning is advantageous as the while loop for calculating
+  // depth makes iterations vary in terms of time.
+  for (int j = 0; j < height; ++j) {
+#pragma omp simd  // vectorize code
+    for (int i = 0; i < width; ++i) {
+      double z_real = x0 + i * xstep;
+      double z_imaginary = y0 + j * ystep;
+      double c_real = z_real;
+      double c_imaginary = z_imaginary;
+
+      // depth should be an int, but the vectorizer will not vectorize,
+      // complaining about mixed data types switching it to double is worth the
+      // small cost in performance to let the vectorizer work
+      double depth = 0;
+      // Figures out how many recurrences are required before divergence, up to
+      // max_depth
+      while (depth < max_depth) {
+        if (z_real * z_real + z_imaginary * z_imaginary > 4.0) {
+          break;  // Escape from a circle of radius 2
+        }
+        double temp_real = z_real * z_real - z_imaginary * z_imaginary;
+        double temp_imaginary = 2.0 * z_real * z_imaginary;
+        z_real = c_real + temp_real;
+        z_imaginary = c_imaginary + temp_imaginary;
+
+        ++depth;
+      }
+      output[j * width + i] = static_cast<unsigned char>(
+          static_cast<double>(depth) / max_depth * 255);
+    }
+  }
+  return output;
+}
+
+#endif  // __INTEL_COMPILER
