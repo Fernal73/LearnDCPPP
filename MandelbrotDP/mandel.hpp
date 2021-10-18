@@ -89,6 +89,11 @@ public:
   Mandel(int row_count, int col_count, int max_iterations)
       : p_(row_count, col_count, max_iterations) {
     data_ = nullptr;
+#ifdef MANDELBROT_USM
+    fname = "mandelbrotusm.png";
+#else
+    fname = "mandelbrot.png";
+#endif
   }
 
   virtual ~Mandel() {}
@@ -120,12 +125,6 @@ public:
         pixels[index++] = b;
       }
     }
-
-#ifdef MANDELBROT_USM
-    fname = "mandelbrotusm.png";
-#else
-    fname = "mandelbrot.png";
-#endif
 
     stbi_write_png(fname.c_str(), row_count, col_count, channel_num, pixels,
                    col_count * channel_num);
