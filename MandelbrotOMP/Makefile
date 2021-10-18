@@ -1,18 +1,38 @@
-SHELL := /usr/bin/env bash
-INTEL_CXX = icpc
-INTEL_CXXFLAGS = -O2 -g -std=c++17 -fiopenmp -fopenmp-targets=spir64 -fsycl
+EXTRA_CFLAGS :=
+ifdef perf_num
+	EXTRA_CFLAGS += -D PERF_NUM
+endif
+CXX = icpc
+CFLAGS = -O3 -g -std=c++17 -ipo -qopenmp
+LIBFLAGS := -qopenmp
+SRCDIR := .
+BUILDDIR := .
+TARGET := $(BUILDDIR)/Mandelbrot
 
-EXE_NAME = mandelbrot
-SOURCES = mandelbrot.cpp main.cpp timer.cpp
+icpc: $(TARGET)
 
-all: build
-.PHONY: all clean run build
+SOURCES := $(wildcard $(SRCDIR)/*.cpp)
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=.o))
 
-build:
-	$(INTEL_CXX) $(INTEL_CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
+$(TARGET): $(OBJECTS)
+	@echo " Linking..."
+	$(CXX) $^ $(LIBFLAGS) -o $(TARGET)
 
-run: 
-	./$(EXE_NAME)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	@mkdir -p $(BUILDDIR)
+	$(CXX) -c $(CFLAGS) $(EXTRA_CFLAGS) -o $@ $< 
 
-clean: 
-	rm -f $(EXE_NAME) run*.sh.* build*.sh.*
+run: $(TARGET)
+ifeq ($(shell uname -s),Darwin)
+	@export  DYLD_LIBRARY_PATH="$(LIBRARY_PATH)"; ./$(TARGET) $(option)
+else
+	./$(TARGET) $(option)
+endif
+
+clean:
+	@echo " Cleaning..."
+	@rm -fr $(BUILDDIR) $(TARGET) 2>/dev/null || true
+	@rm -f *.png
+
+.PHONY: clean run
+
