@@ -1,5 +1,5 @@
 CXX = dpcpp
-CXXFLAGS = -O2 -g -std=c++17
+CXXFLAGS = -std=c++17
 
 EXE_NAME = histogram
 SOURCES = histogram.cpp
