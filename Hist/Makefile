@@ -1,5 +1,5 @@
 CXX = dpcpp
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++17  -Wall -Wformat-security -Werror=format-security
 
 EXE_NAME = histogram
 SOURCES = histogram.cpp
