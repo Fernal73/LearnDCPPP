@@ -124,6 +124,9 @@ int main(void) {
     std::cout << input[i] << " ";
   std::cout << "\n";
   dense_histogram(input);
+  for (int i = 0; i < N; i++)
+    std::cout << input[i] << " ";
+  std::cout << "\n";
   sparse_histogram(input);
   return 0;
 }
