@@ -48,7 +48,7 @@ void dense_histogram(std::vector<uint64_t> &input) {
 
     sycl::host_accessor histogram_new(histogram_new_buf, sycl::read_only);
     std::cout << "[";
-    for (int i = 0; i < num_bins; i++) {
+    for (int i = 0; i < num_bins; i++) 
       std::cout << "(" << i << ", " << histogram_new[i] << ") ";
   // Compute histogram by calculating differences of cumulative histogram
   std::adjacent_difference(oneapi::dpl::execution::dpcpp_default,
