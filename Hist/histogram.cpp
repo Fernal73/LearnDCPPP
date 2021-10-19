@@ -36,17 +36,18 @@ void dense_histogram(std::vector<uint64_t> &input)
 	num_bins =  histogram[N-1] + 1;
     }
     cl::sycl::buffer<uint64_t, 1> histogram_new_buf{ cl::sycl::range<1>(num_bins) };
+    cl::sycl::buffer<uint64_t, 1> bins{ cl::sycl::range<1>(num_bins) };
     auto val_begin = oneapi::dpl::counting_iterator<int>{0};
 
     //Determine the end of each bin of value
     oneapi::dpl::upper_bound(oneapi::dpl::execution::dpcpp_default, oneapi::dpl::begin(histogram_buf), oneapi::dpl::end(histogram_buf), val_begin, val_begin + num_bins,  oneapi::dpl::begin(histogram_new_buf));
 
     //Compute histogram by calculating differences of cumulative histogram
-    std::adjacent_difference(oneapi::dpl::execution::dpcpp_default, oneapi::dpl::begin(histogram_new_buf), oneapi::dpl::end(histogram_new_buf), oneapi::dpl::begin(histogram_new_buf));
+    std::adjacent_difference(oneapi::dpl::execution::dpcpp_default, oneapi::dpl::begin(histogram_new_buf), oneapi::dpl::end(histogram_new_buf), oneapi::dpl::begin(bins));
 
     std::cout << "Dense Histogram:\n";
     {
-        sycl::host_accessor histogram_new(histogram_new_buf, sycl::read_only);
+        sycl::host_accessor histogram_new(bins, sycl::read_only);
 	std::cout << "[";
 	for(int i = 0; i < num_bins; i++)
 	{	
