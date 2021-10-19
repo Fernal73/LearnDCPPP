@@ -98,7 +98,7 @@ int main(void)
     srand((unsigned)time(0));
     //initialize the input array with randomly generated values between 0 and 9
     for (int i = 0; i < N; i++)
-        input.push_back(rand() % 9);
+        input.push_back(rand() % 10);
 
     //replacing all input entries of "4" with random number between 1 and 3
     //this is to ensure that we have atleast one entry with zero-bin size,
