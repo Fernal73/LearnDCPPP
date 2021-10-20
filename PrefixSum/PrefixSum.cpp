@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
   // Start timer
   dpc_common::TimeInterval t;
 
-  result = PrefixSum(prefix_sum1, prefix_sum2, nb, q);
+  PrefixSum(result, nb);
 
   auto elapsed_time = t.Elapsed();
 
