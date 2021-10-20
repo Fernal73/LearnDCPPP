@@ -99,7 +99,7 @@ int* ParallelPrefixSum(int* current, int* next, unsigned int nb, queue& q) {
 
   return result;
 }
-/*
+
 void PrefixSum(int* x, unsigned int nb)
 {
   unsigned int two_power = 1;
@@ -120,7 +120,7 @@ void PrefixSum(int* x, unsigned int nb)
     }
   }
 }
-*/
+
 void Usage(string prog_name, int exponent) {
   cout << " Incorrect parameters\n";
   cout << " Usage: " << prog_name << " n k \n\n";
@@ -181,16 +181,41 @@ int main(int argc, char* argv[]) {
   // Start timer
   dpc_common::TimeInterval t;
 
-  result = ParallelPrefixSum(prefix_sum1, prefix_sum2, nb, q);
+  result = PrefixSum(prefix_sum1, prefix_sum2, nb, q);
 
   auto elapsed_time = t.Elapsed();
 
-  cout << "Elapsed time: " << elapsed_time << " s\n";
+  cout << "Elapsed time (serial): " << elapsed_time << " s\n";
 
   // cout << "\ndata after transforming using parallel prefix sum result:";
   // Show(result, nb);
 
   bool equal = true;
+
+  if (result[0] != data[0])
+    equal = false;
+  else {
+    for (int i = 1; i < nb; i++) {
+      if (result[i] != result[i - 1] + data[i]) {
+        equal = false;
+        break;
+      }
+    }
+  }
+  
+  // Start timer
+  dpc_common::TimeInterval t1;
+
+  result = ParallelPrefixSum(prefix_sum1, prefix_sum2, nb, q);
+
+  elapsed_time = t1.Elapsed();
+
+  cout << "Elapsed time (parallel): " << elapsed_time << " s\n";
+
+  // cout << "\ndata after transforming using parallel prefix sum result:";
+  // Show(result, nb);
+
+  equal = true;
 
   if (result[0] != data[0])
     equal = false;
