@@ -11,7 +11,7 @@ build:
 	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
 
 run: 
-	./$(EXE_NAME)
+	./$(EXE_NAME) 21 47
 
 clean: 
 	rm -f $(EXE_NAME) run.sh.* build.sh.*
