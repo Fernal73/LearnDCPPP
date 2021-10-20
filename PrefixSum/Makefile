@@ -1,5 +1,6 @@
 CXX = dpcpp
-CXXFLAGS = -O2 -g -std=c++17
+CXXFLAGS = -g -O3 -fsycl -std=c++17
+LINKFLAGS = -lOpenCL -lsycl
 
 EXE_NAME = PrefixSum
 SOURCES = PrefixSum.cpp
@@ -8,7 +9,7 @@ all: build
 .PHONY: all clean run build
 
 build:
-	$(CXX) $(CXXFLAGS) -o $(EXE_NAME) $(SOURCES)
+	$(CXX) $(CXXFLAGS)  $(LINKFLAGS) -o $(EXE_NAME) $(SOURCES)
 
 run: 
 	./$(EXE_NAME) 21 47
