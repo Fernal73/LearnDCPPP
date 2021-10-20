@@ -168,13 +168,13 @@ int main(int argc, char* argv[]) {
   int* data = new int[nb];
   int* prefix_sum1 = new int[nb];
   int* prefix_sum2 = new int[nb];
-  int* result = NULL;
+  int* result = new int[nb];
 
   srand(seed);
 
   // Initialize data arrays
   for (int i = 0; i < nb; i++) {
-    data[i] = prefix_sum1[i] = rand() % 10;
+    data[i] = prefix_sum1[i] = result[i] = rand() % 10;
     prefix_sum2[i] = 0;
   }
 
