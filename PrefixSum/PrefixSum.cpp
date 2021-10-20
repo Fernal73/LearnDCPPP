@@ -108,8 +108,6 @@ void PrefixSum(int* x, unsigned int nb)
 
   // Iterate over the necessary iterations
   for (unsigned int iter = 0; iter < num_iter; iter++, two_power*=2) {
-    //Show(x, nb);
-    //    cout << "two_power: " << two_power << "\n";
     for (unsigned int j = nb; j > 0; j--) {
       if (j < two_power) {
         x[j] = x[j];
