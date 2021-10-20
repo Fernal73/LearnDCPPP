@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-ssh -t devcloud 'cd ~/LearnDPCpp && source ~/.bash_profile && exec $SHELL '
+ssh -t devcloud 'cd ~/LearnDPCpp/"$1" && source ~/.bash_profile && exec $SHELL '
