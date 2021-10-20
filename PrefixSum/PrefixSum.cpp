@@ -187,8 +187,8 @@ int main(int argc, char* argv[]) {
 
   cout << "Elapsed time (serial): " << elapsed_time << " s\n";
 
-  // cout << "\ndata after transforming using parallel prefix sum result:";
-  // Show(result, nb);
+  cout << "\ndata after transforming using parallel prefix sum result:";
+  Show(result, nb);
 
   bool equal = true;
 
@@ -212,8 +212,8 @@ int main(int argc, char* argv[]) {
 
   cout << "Elapsed time (parallel): " << elapsed_time << " s\n";
 
-  // cout << "\ndata after transforming using parallel prefix sum result:";
-  // Show(result, nb);
+  cout << "\ndata after transforming using parallel prefix sum result:";
+  Show(result, nb);
 
   equal = true;
 

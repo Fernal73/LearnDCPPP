@@ -5,7 +5,9 @@ LINKFLAGS = -lOpenCL -lsycl
 EXE_NAME = PrefixSum
 SOURCES = PrefixSum.cpp
 
-all: build
+all: 
+	./submitqsub
+
 .PHONY: all clean run build
 
 build:
