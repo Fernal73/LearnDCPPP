@@ -4,9 +4,9 @@
 // SPDX-License-Identifier: MIT
 // =============================================================
 // precision library
+#include <chrono>
 #include <iomanip>
 #include <iostream>
-#include <chrono>
 
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds milliseconds;
@@ -65,7 +65,7 @@ float openmp_device_calc_pi(int num_steps) {
   return pi;
 }
 
-int main(int /*argc*/, char** /*argv*/) {
+int main(int /*argc*/, char ** /*argv*/) {
   int num_steps = 1000000;
   printf("Number of steps is %d\n", num_steps);
   float pi;
@@ -76,27 +76,27 @@ int main(int /*argc*/, char** /*argv*/) {
   // time is measured the 2nd time you run it.
   pi = openmp_device_calc_pi(num_steps);
 
-
-    Clock::time_point t0 = Clock::now();
+  Clock::time_point t0 = Clock::now();
   pi = cpu_seq_calc_pi(num_steps);
-    Clock::time_point t1 = Clock::now();
-    std::chrono::nanoseconds ns = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0);
+  Clock::time_point t1 = Clock::now();
+  std::chrono::nanoseconds ns =
+      std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0);
   std::cout << "Cpu Seq calc: \t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
   std::cout << " in " << ns.count() << " nanoseconds"
             << "\n";
 
-    t0 = Clock::now();
+  t0 = Clock::now();
   pi = openmp_host_calc_pi(num_steps);
-    t1 = Clock::now();
+  t1 = Clock::now();
   std::cout << "Host OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
   std::cout << " in " << ns.count() << " nanoseconds"
             << "\n";
 
-    t0 = Clock::now();
+  t0 = Clock::now();
   pi = openmp_device_calc_pi(num_steps);
-    t1 = Clock::now();
+  t1 = Clock::now();
   std::cout << "Offload OpenMP:\t\t";
   std::cout << std::setprecision(3) << "PI =" << pi;
   std::cout << " in " << ns.count() << " nanoseconds"
